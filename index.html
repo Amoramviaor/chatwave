@@ -571,19 +571,10 @@
     </div>
 
     <script>
-        // Gizli şifre doğrulama (XOR + terslenmiş Base64 + FNV-1a parmak izi; düz metin içermez)
-        const _VAULT_SEGMENTS = [
-            'JSMoJyo9Li4oKi4lJQ==',
-            'MTk4OGJkc20xOTg3'.split('').reverse().join('')
-        ];
-        function _decodeVaultSecret() {
-            const raw = atob(_VAULT_SEGMENTS[0]);
-            const key = 0x5A;
-            let out = '';
-            for (let i = 0; i < raw.length; i++) {
-                out += String.fromCharCode(raw.charCodeAt(i) ^ ((key + i * 3) & 0xFF));
-            }
-            return out;
+        // Gizli şifre doğrulama (terslenmiş Base64 + FNV-1a parmak izi; düz metin şifre içermez)
+        const _VAULT_TOKEN = 'Nzg5MW1zZGI4ODkx';
+        function _resolveVaultKey() {
+            return atob(_VAULT_TOKEN).split('').reverse().join('');
         }
         function _fnv1aDigest(str) {
             let h = 0x811c9dc5;
@@ -593,7 +584,7 @@
             }
             return (h >>> 0).toString(16).padStart(8, '0');
         }
-        const _EXPECTED_DIGEST = _fnv1aDigest(_decodeVaultSecret());
+        const _EXPECTED_DIGEST = _fnv1aDigest(_resolveVaultKey());
 
         const DEFAULT_WORKER_URL = 'https://royal-cake-113e.info-nunnos.workers.dev';
         const WORKER_STORAGE_KEY = 'playarchive_cf_worker_url';
