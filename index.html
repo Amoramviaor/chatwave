@@ -27,8 +27,13 @@
             width: 280px; background: var(--bg-sidebar); border-right: 1px solid var(--border);
             display: flex; flex-direction: column; padding: 18px; flex-shrink: 0; overflow-y: auto;
         }
-        .brand { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; color: #fff; }
+        .brand { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #fff; }
         .brand span { color: var(--accent); }
+        .admin-badge {
+            font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; border: 1px solid var(--border);
+            background: var(--bg-main); color: var(--text-muted); cursor: pointer; font-weight: 600;
+        }
+        .admin-badge.unlocked { color: var(--success); border-color: rgba(16, 185, 129, 0.45); }
 
         .btn-add {
             background: var(--accent); color: white; border: none; padding: 11px 12px;
@@ -105,14 +110,17 @@
         }
 
         .pagination-bar {
-            display: flex; justify-content: center; align-items: center; gap: 12px;
-            margin-top: 26px; padding-bottom: 12px; flex-wrap: wrap;
+            display: flex; justify-content: center; align-items: center; gap: 6px;
+            margin-top: 28px; padding-bottom: 14px; flex-wrap: wrap;
         }
         .btn-page {
             background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border);
-            padding: 9px 16px; border-radius: 8px; cursor: pointer; font-size: 0.86rem; font-weight: 600;
+            padding: 8px 13px; border-radius: 7px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+            min-width: 38px; transition: 0.15s;
         }
-        .btn-page:hover { border-color: var(--accent); background: var(--bg-hover); }
+        .btn-page:hover:not(:disabled) { border-color: var(--accent); background: var(--bg-hover); }
+        .btn-page.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .btn-page:disabled { opacity: 0.4; cursor: not-allowed; }
 
         .empty-state {
             grid-column: 1 / -1; text-align: center; padding: 65px 20px;
@@ -149,11 +157,14 @@
             display: none; justify-content: center; align-items: center; z-index: 100; padding: 14px;
         }
         .modal-overlay.open { display: flex; }
+        #authModalOverlay { z-index: 250; }
+        #lightbox { z-index: 300; }
 
         .add-modal {
             background: var(--bg-sidebar); border: 1px solid var(--border); width: 640px; max-width: 96%;
             max-height: 90vh; overflow-y: auto; border-radius: 12px; padding: 24px;
         }
+        .auth-modal { width: 400px; }
         .add-modal h2 { margin-bottom: 16px; font-size: 1.2rem; }
         .form-group { margin-bottom: 13px; }
         .form-group label { display: block; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 5px; }
@@ -165,7 +176,7 @@
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
         .btn-secondary { background: var(--bg-hover); color: #fff; border: none; padding: 9px 15px; border-radius: 8px; cursor: pointer; }
 
-        /* Checklist & Matrix in Forms / Detail */
+        /* Checklist & Matrix */
         .check-grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
             gap: 6px; background: var(--bg-main); border: 1px solid var(--border);
@@ -250,7 +261,7 @@
         .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); padding: 9px 14px; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 12px; }
         .btn-danger:hover { background: var(--danger); color: #fff; }
 
-        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 200; display: none; justify-content: center; align-items: center; }
+        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; justify-content: center; align-items: center; }
         .lightbox.open { display: flex; }
         .lightbox img { max-width: 92%; max-height: 92%; border-radius: 8px; }
 
@@ -261,9 +272,13 @@
 <body>
 
     <aside class="sidebar">
-        <div class="brand">🎮 <span>PLAY</span>ARCHIVE</div>
-        <button class="btn-add" onclick="openLinkImportModal()">+ Linkten Oyun Çek</button>
-        <button class="btn-manual" onclick="openManualModal()">✍️ Manuel Oyun Ekle</button>
+        <div class="brand">
+            <div>🎮 <span>PLAY</span>ARCHIVE</div>
+            <button class="admin-badge" id="adminStatusBtn" onclick="toggleAdminSession()">🔒 Admin</button>
+        </div>
+
+        <button class="btn-add" onclick="requireAdmin(() => openLinkImportModal())">🔒 + Linkten Oyun Çek</button>
+        <button class="btn-manual" onclick="requireAdmin(() => openManualModal())">🔒 ✍️ Manuel Oyun Ekle</button>
 
         <div class="nav-group-title">Durum</div>
         <div class="nav-item active" onclick="filterByStatus('ALL', this)">Tüm Oyunlar <span class="badge" id="count-ALL">0</span></div>
@@ -280,10 +295,10 @@
         <div id="categoryNavList"></div>
 
         <div class="sidebar-footer">
-            <div class="nav-group-title" style="margin:0 0 2px;">Proxy & Yedekleme</div>
-            <button class="btn-outline" onclick="openProxyModal()">⚙️ Cloudflare Worker URL</button>
-            <button class="btn-outline" onclick="exportArchiveJson()">💾 Arşivi JSON İndir</button>
-            <button class="btn-outline" onclick="document.getElementById('importFileInput').click()">📂 JSON Arşiv Yükle</button>
+            <div class="nav-group-title" style="margin:0 0 2px;">Admin İşlemleri</div>
+            <button class="btn-outline" onclick="requireAdmin(() => openProxyModal())">🔒 ⚙️ Cloudflare Worker URL</button>
+            <button class="btn-outline" onclick="requireAdmin(() => exportArchiveJson())">🔒 💾 Arşivi JSON İndir</button>
+            <button class="btn-outline" onclick="requireAdmin(() => document.getElementById('importFileInput').click())">🔒 📂 JSON Arşiv Yükle</button>
             <input type="file" id="importFileInput" accept=".json,application/json" style="display:none" onchange="importArchiveJson(event)">
         </div>
     </aside>
@@ -308,6 +323,22 @@
             <div class="pagination-bar" id="paginationBar"></div>
         </div>
     </main>
+
+    <!-- Admin Şifre Modalı -->
+    <div class="modal-overlay" id="authModalOverlay">
+        <div class="add-modal auth-modal">
+            <h2>🔒 Admin Şifresi</h2>
+            <div class="form-group">
+                <label>Şifre</label>
+                <input type="password" class="form-control" id="adminPassInput" placeholder="Admin şifresini gir..." onkeydown="if(event.key==='Enter') verifyAdminPass()">
+                <div class="hint-text" id="authErrorText" style="color:var(--danger); display:none;">Şifre hatalı!</div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeAuthModal()">İptal</button>
+                <button class="btn-add" style="width:auto; margin:0;" onclick="verifyAdminPass()">Giriş Yap</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Linkten Çekme Modalı -->
     <div class="modal-overlay" id="linkModalOverlay">
@@ -417,7 +448,7 @@
                 <div class="check-grid" id="manFeaturesGrid"></div>
             </div>
             <div class="form-group">
-                <label>Diller (Arayüz / Seslendirme / Altyazı - Her satıra: Dil | Arayüz | Ses | Altyazı)</label>
+                <label>Diller (Her satıra: Dil | Arayüz(1/0) | Ses(1/0) | Altyazı(1/0))</label>
                 <textarea class="form-control" id="manLanguagesText" rows="4" placeholder="Türkçe | 1 | 1 | 1&#10;İngilizce | 1 | 1 | 1"></textarea>
             </div>
             <div class="form-group">
@@ -540,6 +571,30 @@
     </div>
 
     <script>
+        // Gizli şifre doğrulama (XOR + terslenmiş Base64 + FNV-1a parmak izi; düz metin içermez)
+        const _VAULT_SEGMENTS = [
+            'JSMoJyo9Li4oKi4lJQ==',
+            'MTk4OGJkc20xOTg3'.split('').reverse().join('')
+        ];
+        function _decodeVaultSecret() {
+            const raw = atob(_VAULT_SEGMENTS[0]);
+            const key = 0x5A;
+            let out = '';
+            for (let i = 0; i < raw.length; i++) {
+                out += String.fromCharCode(raw.charCodeAt(i) ^ ((key + i * 3) & 0xFF));
+            }
+            return out;
+        }
+        function _fnv1aDigest(str) {
+            let h = 0x811c9dc5;
+            for (let i = 0; i < str.length; i++) {
+                h ^= str.charCodeAt(i);
+                h = Math.imul(h, 0x01000193);
+            }
+            return (h >>> 0).toString(16).padStart(8, '0');
+        }
+        const _EXPECTED_DIGEST = _fnv1aDigest(_decodeVaultSecret());
+
         const DEFAULT_WORKER_URL = 'https://royal-cake-113e.info-nunnos.workers.dev';
         const WORKER_STORAGE_KEY = 'playarchive_cf_worker_url';
         const CATEGORIES_STORAGE_KEY = 'playarchive_categories_v1';
@@ -564,7 +619,7 @@
         const DB_VERSION = 2;
         const STORE_NAME = 'games';
         const MEDIA_STORE = 'media_blobs';
-        const PAGE_SIZE = 48;
+        const PAGE_SIZE = 50;
 
         let db = null;
         let allGames = [];
@@ -572,11 +627,100 @@
         let currentStatusFilter = 'ALL';
         let currentCategoryFilter = 'ALL';
         let currentSearch = '';
-        let visibleCount = PAGE_SIZE;
+        let currentPage = 1;
         let searchDebounceTimer = null;
         let activeDetailAppId = null;
         let editingAppId = null;
         let activeObjectUrls = [];
+        let isAdminUnlocked = false;
+        let pendingAdminCallback = null;
+
+        function updateAdminBadge() {
+            const btn = document.getElementById('adminStatusBtn');
+            if (!btn) return;
+            if (isAdminUnlocked) {
+                btn.textContent = '🔓 Çıkış';
+                btn.classList.add('unlocked');
+            } else {
+                btn.textContent = '🔒 Admin';
+                btn.classList.remove('unlocked');
+            }
+        }
+
+        function toggleAdminSession() {
+            if (isAdminUnlocked) {
+                isAdminUnlocked = false;
+                updateAdminBadge();
+            } else {
+                openAuthModal(null);
+            }
+        }
+
+        function requireAdmin(fn) {
+            if (isAdminUnlocked) {
+                fn();
+                return;
+            }
+            openAuthModal(fn);
+        }
+
+        function openAuthModal(cb) {
+            pendingAdminCallback = cb || null;
+            document.getElementById('adminPassInput').value = '';
+            document.getElementById('authErrorText').style.display = 'none';
+            document.getElementById('authModalOverlay').classList.add('open');
+            setTimeout(() => document.getElementById('adminPassInput').focus(), 50);
+        }
+
+        function closeAuthModal() {
+            pendingAdminCallback = null;
+            document.getElementById('authModalOverlay').classList.remove('open');
+        }
+
+        function verifyAdminPass() {
+            const entered = document.getElementById('adminPassInput').value || '';
+            if (_fnv1aDigest(entered) === _EXPECTED_DIGEST) {
+                isAdminUnlocked = true;
+                updateAdminBadge();
+                const cb = pendingAdminCallback;
+                closeAuthModal();
+                if (typeof cb === 'function') cb();
+            } else {
+                document.getElementById('authErrorText').style.display = 'block';
+            }
+        }
+
+        // ESC ile açık pencereyi kapatma
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+            if (document.getElementById('lightbox').classList.contains('open')) {
+                document.getElementById('lightbox').classList.remove('open');
+                return;
+            }
+            if (document.getElementById('authModalOverlay').classList.contains('open')) {
+                closeAuthModal();
+                return;
+            }
+            if (document.getElementById('editModalOverlay').classList.contains('open')) {
+                closeEditModal();
+                return;
+            }
+            if (document.getElementById('linkModalOverlay').classList.contains('open')) {
+                closeLinkModal();
+                return;
+            }
+            if (document.getElementById('manualModalOverlay').classList.contains('open')) {
+                closeManualModal();
+                return;
+            }
+            if (document.getElementById('proxyModalOverlay').classList.contains('open')) {
+                closeProxyModal();
+                return;
+            }
+            if (document.getElementById('detailModalOverlay').classList.contains('open')) {
+                closeDetail();
+            }
+        });
 
         function getWorkerUrl() {
             const saved = (localStorage.getItem(WORKER_STORAGE_KEY) || '').trim();
@@ -903,6 +1047,7 @@
         }
 
         async function initApp() {
+            updateAdminBadge();
             loadCategories();
             updateProxyBadge();
             try {
@@ -915,7 +1060,7 @@
         }
 
         async function reloadLibrary(resetPage = false) {
-            if (resetPage) visibleCount = PAGE_SIZE;
+            if (resetPage) currentPage = 1;
             allGames = await getAllSummariesFromDb();
             updateCounts();
             renderCategorySidebar();
@@ -939,7 +1084,7 @@
             currentStatusFilter = status;
             currentCategoryFilter = 'ALL';
             document.getElementById('topCategoryFilter').value = 'ALL';
-            visibleCount = PAGE_SIZE;
+            currentPage = 1;
             document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active'));
             if (el) el.classList.add('active');
             renderCategorySidebar();
@@ -949,7 +1094,7 @@
         function filterByCategory(cat, el) {
             currentCategoryFilter = cat;
             document.getElementById('topCategoryFilter').value = cat;
-            visibleCount = PAGE_SIZE;
+            currentPage = 1;
             document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active'));
             if (el) el.classList.add('active');
             renderGrid();
@@ -957,7 +1102,7 @@
 
         function onTopCategoryChange(val) {
             currentCategoryFilter = val;
-            visibleCount = PAGE_SIZE;
+            currentPage = 1;
             renderCategorySidebar();
             renderGrid();
         }
@@ -966,7 +1111,7 @@
             clearTimeout(searchDebounceTimer);
             searchDebounceTimer = setTimeout(() => {
                 currentSearch = document.getElementById('searchInput').value.toLowerCase().trim();
-                visibleCount = PAGE_SIZE;
+                currentPage = 1;
                 renderGrid();
             }, 120);
         }
@@ -985,6 +1130,12 @@
             });
         }
 
+        function goToPage(pageNum) {
+            currentPage = pageNum;
+            renderGrid();
+            document.getElementById('scrollArea').scrollTop = 0;
+        }
+
         function renderGrid() {
             const grid = document.getElementById('gamesGrid');
             const pagination = document.getElementById('paginationBar');
@@ -1001,7 +1152,10 @@
                 return;
             }
 
-            const slice = filtered.slice(0, visibleCount);
+            const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+            if (currentPage > totalPages) currentPage = totalPages;
+            const startIdx = (currentPage - 1) * PAGE_SIZE;
+            const slice = filtered.slice(startIdx, startIdx + PAGE_SIZE);
             const fragment = document.createDocumentFragment();
 
             for (let i = 0; i < slice.length; i++) {
@@ -1028,19 +1182,14 @@
             grid.innerHTML = '';
             grid.appendChild(fragment);
 
-            if (filtered.length > visibleCount) {
-                const remaining = filtered.length - visibleCount;
-                pagination.innerHTML = `
-                    <button class="btn-page" onclick="showMoreGames()">Daha Fazla Göster (${remaining} oyun daha)</button>
-                    <button class="btn-page" onclick="showAllFiltered(${filtered.length})">Tümünü Göster (${filtered.length})</button>
-                `;
-            } else {
-                pagination.innerHTML = `<span style="color:var(--text-muted); font-size:0.82rem;">Gösterilen: ${slice.length} / ${filtered.length} oyun</span>`;
+            let buttonsHtml = `<button class="btn-page" ${currentPage <= 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">‹</button>`;
+            for (let p = 1; p <= totalPages; p++) {
+                buttonsHtml += `<button class="btn-page ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
             }
+            buttonsHtml += `<button class="btn-page" ${currentPage >= totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">›</button>`;
+            buttonsHtml += `<span style="color:var(--text-muted); font-size:0.8rem; margin-left:8px;">(${startIdx + 1}-${Math.min(startIdx + PAGE_SIZE, filtered.length)} / ${filtered.length})</span>`;
+            pagination.innerHTML = buttonsHtml;
         }
-
-        function showMoreGames() { visibleCount += PAGE_SIZE; renderGrid(); }
-        function showAllFiltered(total) { visibleCount = total; renderGrid(); }
 
         function escapeHtml(str) {
             return String(str || '').replace(/[&<>"']/g, m => ({
@@ -1115,7 +1264,6 @@
                         url: (m.mp4 && (m.mp4.max || m.mp4['480'])) || (m.webm && (m.webm.max || m.webm['480'])) || null
                     })).filter(m => m.url);
 
-                    // Özellikler ve kontrolcüler
                     const features = [];
                     for (const cat of (info.categories || [])) {
                         if (cat && cat.description) features.push(cat.description);
@@ -1124,10 +1272,8 @@
                         features.push(info.controller_support === 'full' ? 'Tam Kontrolcü Desteği' : `Kontrolcü Desteği (${info.controller_support})`);
                     }
 
-                    // Diller (Arayüz, Seslendirme, Altyazı)
                     const languages = parseSteamLanguagesHtml(info.supported_language || '');
 
-                    // DLC listesi (ilk 15 DLC'nin adını çöz)
                     const dlcIds = Array.isArray(info.dlc) ? info.dlc.slice(0, 15) : [];
                     const dlcs = [];
                     for (const dlcId of dlcIds) {
@@ -1299,6 +1445,7 @@
         }
 
         async function submitLinkGame() {
+            if (!isAdminUnlocked) return requireAdmin(submitLinkGame);
             const rawInput = document.getElementById('gameUrlInput').value.trim();
             const status = document.getElementById('linkStatusInput').value;
             const category = document.getElementById('linkCategoryInput').value || 'Genel';
@@ -1372,6 +1519,7 @@
         }
 
         async function submitManualGame() {
+            if (!isAdminUnlocked) return requireAdmin(submitManualGame);
             const name = document.getElementById('manName').value.trim();
             if (!name) return alert('Lütfen bir oyun adı gir.');
 
@@ -1817,6 +1965,7 @@
         }
 
         async function exportArchiveJson() {
+            if (!isAdminUnlocked) return requireAdmin(exportArchiveJson);
             const fullList = await getAllFullGamesFromDb();
             const payload = {
                 categories,
@@ -1832,6 +1981,10 @@
         }
 
         async function importArchiveJson(event) {
+            if (!isAdminUnlocked) {
+                event.target.value = '';
+                return requireAdmin(() => document.getElementById('importFileInput').click());
+            }
             const file = event.target.files && event.target.files[0];
             if (!file) return;
             try {
