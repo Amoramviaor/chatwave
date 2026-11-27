@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlayArchive - Çok Kaynaklı & Manuel Oyun Arşivim</title>
+    <title>PlayArchive - Gelişmiş Oyun Arşivim</title>
     <style>
         :root {
             --bg-main: #0f1117;
@@ -24,7 +24,7 @@
 
         /* Sidebar */
         .sidebar {
-            width: 275px; background: var(--bg-sidebar); border-right: 1px solid var(--border);
+            width: 280px; background: var(--bg-sidebar); border-right: 1px solid var(--border);
             display: flex; flex-direction: column; padding: 18px; flex-shrink: 0; overflow-y: auto;
         }
         .brand { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; color: #fff; }
@@ -39,7 +39,7 @@
         .btn-manual {
             background: #1f2937; color: #e5e7eb; border: 1px solid var(--border); padding: 10px 12px;
             border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.15s;
-            margin-bottom: 18px; font-size: 0.88rem; width: 100%;
+            margin-bottom: 16px; font-size: 0.88rem; width: 100%;
         }
         .btn-manual:hover { background: var(--bg-hover); border-color: var(--accent); }
 
@@ -51,19 +51,25 @@
         .nav-item {
             padding: 8px 11px; border-radius: 6px; cursor: pointer; color: var(--text-muted);
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;
-            transition: 0.15s; font-size: 0.87rem;
+            transition: 0.15s; font-size: 0.86rem; gap: 6px;
         }
         .nav-item:hover, .nav-item.active { background: var(--bg-hover); color: #fff; }
-        .nav-item .badge { background: var(--bg-main); padding: 2px 7px; border-radius: 12px; font-size: 0.72rem; }
+        .nav-item .badge { background: var(--bg-main); padding: 2px 7px; border-radius: 12px; font-size: 0.72rem; flex-shrink: 0; }
+        .cat-actions { display: inline-flex; gap: 3px; }
+        .mini-icon-btn {
+            background: transparent; border: none; color: var(--text-muted); cursor: pointer;
+            font-size: 0.72rem; padding: 1px 4px; border-radius: 4px;
+        }
+        .mini-icon-btn:hover { background: var(--bg-main); color: #fff; }
 
         .cat-add-row { display: flex; gap: 6px; margin-bottom: 8px; }
         .cat-add-input {
-            flex: 1; padding: 6px 9px; background: var(--bg-main); border: 1px solid var(--border);
+            flex: 1; padding: 7px 9px; background: var(--bg-main); border: 1px solid var(--border);
             border-radius: 6px; color: #fff; font-size: 0.8rem; outline: none;
         }
         .cat-add-btn {
             background: var(--bg-hover); color: #fff; border: 1px solid var(--border);
-            border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 0.8rem; font-weight: 600;
+            border-radius: 6px; padding: 7px 11px; cursor: pointer; font-size: 0.82rem; font-weight: 600;
         }
         .cat-add-btn:hover { border-color: var(--accent); }
 
@@ -83,7 +89,7 @@
         .topbar-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 240px; flex-wrap: wrap; }
         .search-box {
             background: var(--bg-sidebar); border: 1px solid var(--border);
-            padding: 9px 14px; border-radius: 8px; color: #fff; width: 300px; max-width: 100%; outline: none;
+            padding: 9px 14px; border-radius: 8px; color: #fff; width: 290px; max-width: 100%; outline: none;
         }
         .search-box:focus { border-color: var(--accent); }
         .filter-select {
@@ -129,7 +135,7 @@
             padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; border: 1px solid var(--border);
         }
         .cat-pill {
-            position: absolute; bottom: 8px; left: 8px; background: rgba(59, 130, 246, 0.22);
+            position: absolute; bottom: 8px; left: 8px; background: rgba(59, 130, 246, 0.24);
             color: #dbeafe; padding: 3px 8px; border-radius: 6px; font-size: 0.68rem; font-weight: 600;
             border: 1px solid rgba(59, 130, 246, 0.45); max-width: 85%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
@@ -145,7 +151,7 @@
         .modal-overlay.open { display: flex; }
 
         .add-modal {
-            background: var(--bg-sidebar); border: 1px solid var(--border); width: 560px; max-width: 96%;
+            background: var(--bg-sidebar); border: 1px solid var(--border); width: 640px; max-width: 96%;
             max-height: 90vh; overflow-y: auto; border-radius: 12px; padding: 24px;
         }
         .add-modal h2 { margin-bottom: 16px; font-size: 1.2rem; }
@@ -154,15 +160,52 @@
         .form-control { width: 100%; padding: 9px 11px; background: var(--bg-main); border: 1px solid var(--border); border-radius: 8px; color: #fff; outline: none; font-size: 0.88rem; }
         .form-control:focus { border-color: var(--accent); }
         .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        @media (max-width: 560px) { .form-row-2 { grid-template-columns: 1fr; } }
+        @media (max-width: 580px) { .form-row-2 { grid-template-columns: 1fr; } }
 
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
         .btn-secondary { background: var(--bg-hover); color: #fff; border: none; padding: 9px 15px; border-radius: 8px; cursor: pointer; }
+
+        /* Checklist & Matrix in Forms / Detail */
+        .check-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 6px; background: var(--bg-main); border: 1px solid var(--border);
+            padding: 10px; border-radius: 8px; max-height: 190px; overflow-y: auto;
+        }
+        .check-item {
+            display: flex; align-items: center; gap: 7px; font-size: 0.8rem;
+            color: #d1d5db; cursor: pointer; padding: 3px 4px; border-radius: 4px;
+        }
+        .check-item:hover { background: var(--bg-hover); }
+
+        .lang-table { width: 100%; border-collapse: collapse; background: var(--bg-main); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; font-size: 0.82rem; }
+        .lang-table th, .lang-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+        .lang-table th { background: var(--bg-card); color: var(--text-muted); font-size: 0.76rem; }
+        .lang-table td.center, .lang-table th.center { text-align: center; width: 78px; }
+        .check-mark { color: var(--success); font-weight: 700; }
+        .dash-mark { color: var(--text-muted); }
+
+        .feature-list { display: flex; flex-direction: column; gap: 6px; }
+        .feature-row {
+            display: flex; align-items: center; gap: 10px; background: var(--bg-card);
+            border: 1px solid var(--border); padding: 8px 12px; border-radius: 7px; font-size: 0.85rem;
+        }
+
+        .dlc-list { display: flex; flex-direction: column; gap: 8px; }
+        .dlc-item {
+            display: flex; justify-content: space-between; align-items: center; gap: 10px;
+            background: var(--bg-card); border: 1px solid var(--border); padding: 9px 12px;
+            border-radius: 8px; font-size: 0.84rem;
+        }
+        .dlc-add-btn {
+            background: var(--bg-hover); color: #fff; border: 1px solid var(--border);
+            padding: 4px 9px; border-radius: 6px; font-size: 0.74rem; cursor: pointer; flex-shrink: 0;
+        }
+        .dlc-add-btn:hover { border-color: var(--accent); background: var(--accent); }
 
         /* Detail Modal */
         .detail-modal {
             background: var(--bg-main); border: 1px solid var(--border);
-            width: 94%; max-width: 1140px; height: 90vh; border-radius: 14px;
+            width: 94%; max-width: 1160px; height: 90vh; border-radius: 14px;
             overflow-y: auto; position: relative; display: flex; flex-direction: column;
         }
         .detail-banner { height: 285px; width: 100%; position: relative; flex-shrink: 0; background-size: cover; background-position: center; }
@@ -180,7 +223,7 @@
 
         .edit-pen {
             background: rgba(255, 255, 255, 0.06); color: var(--text-muted); border: 1px solid var(--border);
-            border-radius: 6px; padding: 2px 6px; font-size: 0.74rem; cursor: pointer; line-height: 1.2;
+            border-radius: 6px; padding: 3px 7px; font-size: 0.75rem; cursor: pointer; line-height: 1.2;
             vertical-align: middle; transition: 0.15s;
         }
         .edit-pen:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
@@ -189,7 +232,7 @@
         @media (max-width: 840px) { .detail-grid { grid-template-columns: 1fr; } }
 
         .section-title {
-            font-size: 1.05rem; font-weight: 600; margin: 20px 0 12px;
+            font-size: 1.05rem; font-weight: 600; margin: 22px 0 12px;
             border-bottom: 1px solid var(--border); padding-bottom: 7px;
             display: flex; align-items: center; justify-content: space-between;
         }
@@ -229,10 +272,10 @@
         <div class="nav-item" onclick="filterByStatus('Tamamlandı', this)">Tamamlandı <span class="badge" id="count-Tamamlandı">0</span></div>
         <div class="nav-item" onclick="filterByStatus('Favori', this)">Favoriler <span class="badge" id="count-Favori">0</span></div>
 
-        <div class="nav-group-title">Kategoriler</div>
+        <div class="nav-group-title">Kategoriler (Sınırsız)</div>
         <div class="cat-add-row">
-            <input type="text" class="cat-add-input" id="newCategoryInput" placeholder="Yeni kategori..." onkeydown="if(event.key==='Enter') addNewCategory()">
-            <button class="cat-add-btn" onclick="addNewCategory()">+</button>
+            <input type="text" class="cat-add-input" id="newCategoryInput" placeholder="Yeni kategori adı..." onkeydown="if(event.key==='Enter') addNewCategory()">
+            <button class="cat-add-btn" onclick="addNewCategory()">+ Ekle</button>
         </div>
         <div id="categoryNavList"></div>
 
@@ -254,7 +297,7 @@
                 </select>
             </div>
             <div class="meta-bar">
-                <span id="proxyStatus">Proxy: Genel Yedek</span>
+                <span id="proxyStatus">Proxy: Cloudflare Worker Aktif</span>
                 <span>•</span>
                 <span id="storageInfo">IndexedDB Hazırlanıyor...</span>
             </div>
@@ -269,11 +312,11 @@
     <!-- Linkten Çekme Modalı -->
     <div class="modal-overlay" id="linkModalOverlay">
         <div class="add-modal">
-            <h2>Linkten Oyun Bilgisi Çek</h2>
+            <h2>Linkten Oyun, Özellik, Dil ve DLC Çek</h2>
             <div class="form-group">
                 <label>Oyun Linki veya Steam App ID</label>
                 <input type="text" class="form-control" id="gameUrlInput" placeholder="https://store.steampowered.com/app/1939390/ veya gog.com, itch.io, fitgirl-repacks...">
-                <div class="hint-text">Desteklenenler: Steam, GOG, itch.io, Epic Games, Amazon Games, Metacritic, FitGirl, SKIDROW Reloaded, GOG Unlocked, IGG Games, Lewd Ninja, Fap Nation, Island of Pleasure, EroTorrent ve genel OpenGraph sayfaları.</div>
+                <div class="hint-text">Steam, GOG, itch.io, Epic, Amazon Games, Metacritic, FitGirl, SKIDROW Reloaded, GOG Unlocked, IGG Games, Lewd Ninja, Fap Nation, Island of Pleasure, EroTorrent ve genel sayfalar desteklenir.</div>
             </div>
             <div class="form-row-2">
                 <div class="form-group">
@@ -294,7 +337,7 @@
                 <label>Kişisel Notun (İsteğe Bağlı)</label>
                 <textarea class="form-control" id="linkNotesInput" rows="2" placeholder="Sürüm, yama veya not..."></textarea>
             </div>
-            <div class="loader" id="linkLoader">⏳ Oyun verileri, görseller ve bağlantılar çekiliyor...</div>
+            <div class="loader" id="linkLoader">⏳ Oyun verileri, diller, özellikler ve DLC'ler çekiliyor...</div>
             <div class="modal-actions" id="linkModalActions">
                 <button class="btn-secondary" onclick="closeLinkModal()">İptal</button>
                 <button class="btn-add" style="width:auto; margin:0;" onclick="submitLinkGame()">Çek ve Arşive Ekle</button>
@@ -305,7 +348,7 @@
     <!-- Manuel Oyun Ekleme Modalı -->
     <div class="modal-overlay" id="manualModalOverlay">
         <div class="add-modal">
-            <h2>Manuel Oyun Ekle (Yerel Dosya + Link)</h2>
+            <h2>Manuel Oyun Ekle (Yerel Dosya + Link + DLC)</h2>
             <div class="form-group">
                 <label>Oyun Adı *</label>
                 <input type="text" class="form-control" id="manName" placeholder="Örn: Özel Oyun Adı">
@@ -365,9 +408,21 @@
                     <input type="text" class="form-control" id="manDeveloper" placeholder="Geliştirici adı">
                 </div>
                 <div class="form-group">
-                    <label>Çıkış Tarihi / Türler (Virgülle)</label>
+                    <label>Türler (Virgülle)</label>
                     <input type="text" class="form-control" id="manGenres" placeholder="Aksiyon, RPG">
                 </div>
+            </div>
+            <div class="form-group">
+                <label>Özellikler ve Kontrolcü Desteği</label>
+                <div class="check-grid" id="manFeaturesGrid"></div>
+            </div>
+            <div class="form-group">
+                <label>Diller (Arayüz / Seslendirme / Altyazı - Her satıra: Dil | Arayüz | Ses | Altyazı)</label>
+                <textarea class="form-control" id="manLanguagesText" rows="4" placeholder="Türkçe | 1 | 1 | 1&#10;İngilizce | 1 | 1 | 1"></textarea>
+            </div>
+            <div class="form-group">
+                <label>DLC'ler (Her satıra: DLC Adı veya DLC Adı | Link)</label>
+                <textarea class="form-control" id="manDlcsText" rows="3" placeholder="Expansion Pack | https://...&#10;Soundtrack DLC"></textarea>
             </div>
             <div class="form-group">
                 <label>Açıklama</label>
@@ -385,13 +440,87 @@
         </div>
     </div>
 
+    <!-- Gelişmiş Düzenleme (Edit) Penceresi -->
+    <div class="modal-overlay" id="editModalOverlay">
+        <div class="add-modal">
+            <h2>✏️ Oyun Detaylarını Düzenle</h2>
+            <div class="form-group">
+                <label>Oyun Adı</label>
+                <input type="text" class="form-control" id="editNameInput">
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select class="form-control" id="editCategoryInput"></select>
+                </div>
+                <div class="form-group">
+                    <label>Durum</label>
+                    <select class="form-control" id="editStatusInput">
+                        <option value="Oynanacak">Oynanacak</option>
+                        <option value="Oynanıyor">Oynanıyor</option>
+                        <option value="Tamamlandı">Tamamlandı</option>
+                        <option value="Favori">Favori</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label>Geliştirici(ler) (Virgülle)</label>
+                    <input type="text" class="form-control" id="editDevelopersInput">
+                </div>
+                <div class="form-group">
+                    <label>Yayıncı(lar) (Virgülle)</label>
+                    <input type="text" class="form-control" id="editPublishersInput">
+                </div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group">
+                    <label>Çıkış Tarihi</label>
+                    <input type="text" class="form-control" id="editReleaseInput">
+                </div>
+                <div class="form-group">
+                    <label>Metacritic Puanı (0-100)</label>
+                    <input type="number" min="0" max="100" class="form-control" id="editMetacriticInput">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Tür Etiketleri (Virgülle)</label>
+                <input type="text" class="form-control" id="editGenresInput">
+            </div>
+            <div class="form-group">
+                <label>Özellikler ve Kontrolcü Desteği</label>
+                <div class="check-grid" id="editFeaturesGrid"></div>
+            </div>
+            <div class="form-group">
+                <label>Diller (Her satıra: Dil | Arayüz(1/0) | Seslendirme(1/0) | Altyazı(1/0))</label>
+                <textarea class="form-control" id="editLanguagesInput" rows="5"></textarea>
+            </div>
+            <div class="form-group">
+                <label>DLC'ler (Her satıra: DLC Adı veya DLC Adı | Link)</label>
+                <textarea class="form-control" id="editDlcsInput" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Açıklama</label>
+                <textarea class="form-control" id="editDescInput" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Kişisel Notlar</label>
+                <textarea class="form-control" id="editNotesInput" rows="3"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeEditModal()">İptal</button>
+                <button class="btn-add" style="width:auto; margin:0;" onclick="saveEditedGame()">Değişiklikleri Kaydet</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Cloudflare Worker Ayar Modalı -->
     <div class="modal-overlay" id="proxyModalOverlay">
         <div class="add-modal">
             <h2>Cloudflare Worker Proxy Ayarı</h2>
             <div class="form-group">
-                <label>Worker URL (Örn: https://royal-cake-113e.info-nunnos.workers.dev)</label>
-                <input type="text" class="form-control" id="workerUrlInput" placeholder="https://....workers.dev">
+                <label>Worker URL</label>
+                <input type="text" class="form-control" id="workerUrlInput" placeholder="https://royal-cake-113e.info-nunnos.workers.dev">
             </div>
             <div class="modal-actions">
                 <button class="btn-secondary" onclick="closeProxyModal()">Kapat</button>
@@ -415,6 +544,22 @@
         const WORKER_STORAGE_KEY = 'playarchive_cf_worker_url';
         const CATEGORIES_STORAGE_KEY = 'playarchive_categories_v1';
 
+        const STANDARD_FEATURES = [
+            'Çevrimiçi PvP',
+            'Ortak/Bölünmüş Ekran PvP',
+            'Çevrimiçi Eşli',
+            'Ortak/Bölünmüş Ekran Eşli',
+            'Ortak/Bölünmüş Ekran',
+            'Steam Başarımları',
+            'Steam Cloud',
+            'Remote Play Together',
+            'Aile Paylaşımı',
+            'Erişilebilirlik Özellikleri',
+            'Tam Kontrolcü Desteği',
+            'Xbox Kontrolcüleri',
+            'PlayStation Kontrolcüleri'
+        ];
+
         const DB_NAME = 'PlayArchiveBrowserDB';
         const DB_VERSION = 2;
         const STORE_NAME = 'games';
@@ -430,6 +575,7 @@
         let visibleCount = PAGE_SIZE;
         let searchDebounceTimer = null;
         let activeDetailAppId = null;
+        let editingAppId = null;
         let activeObjectUrls = [];
 
         function getWorkerUrl() {
@@ -472,10 +618,48 @@
             input.value = '';
         }
 
+        async function renameCategory(oldName, ev) {
+            ev.stopPropagation();
+            const nextName = prompt('Yeni kategori adını gir:', oldName);
+            if (!nextName) return;
+            const clean = nextName.trim();
+            if (!clean || clean === oldName) return;
+
+            categories = Array.from(new Set(categories.map(c => c === oldName ? clean : c)));
+            if (currentCategoryFilter === oldName) currentCategoryFilter = clean;
+            saveCategories();
+
+            const fullGames = await getAllFullGamesFromDb();
+            for (const g of fullGames) {
+                if ((g.category || 'Genel') === oldName) {
+                    await putGameToDb({ ...g, category: clean });
+                }
+            }
+            await reloadLibrary(false);
+        }
+
+        async function removeCategory(catName, ev) {
+            ev.stopPropagation();
+            if (!confirm(`"${catName}" kategorisini silmek istediğine emin misin? Bu kategorideki oyunlar "Genel" olarak güncellenir.`)) return;
+            categories = categories.filter(c => c !== catName);
+            if (!categories.includes('Genel')) categories.unshift('Genel');
+            if (currentCategoryFilter === catName) currentCategoryFilter = 'ALL';
+            saveCategories();
+
+            const fullGames = await getAllFullGamesFromDb();
+            for (const g of fullGames) {
+                if ((g.category || 'Genel') === catName) {
+                    await putGameToDb({ ...g, category: 'Genel' });
+                }
+            }
+            await reloadLibrary(false);
+        }
+
         function syncCategorySelects() {
             const topSel = document.getElementById('topCategoryFilter');
             const linkSel = document.getElementById('linkCategoryInput');
             const manSel = document.getElementById('manCategory');
+            const editSel = document.getElementById('editCategoryInput');
 
             if (topSel) {
                 topSel.innerHTML = `<option value="ALL">Tüm Kategoriler</option>` +
@@ -484,6 +668,7 @@
             const opts = categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
             if (linkSel) linkSel.innerHTML = opts;
             if (manSel) manSel.innerHTML = opts;
+            if (editSel) editSel.innerHTML = opts;
         }
 
         function renderCategorySidebar() {
@@ -496,8 +681,104 @@
             }
             container.innerHTML = categories.map(cat => {
                 const active = currentCategoryFilter === cat ? 'active' : '';
-                return `<div class="nav-item ${active}" onclick="filterByCategory('${escapeJs(cat)}', this)">${escapeHtml(cat)} <span class="badge">${catCounts[cat] || 0}</span></div>`;
+                const canDelete = categories.length > 1;
+                return `
+                    <div class="nav-item ${active}" onclick="filterByCategory('${escapeJs(cat)}', this)">
+                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(cat)}</span>
+                        <span style="display:inline-flex; align-items:center; gap:4px; flex-shrink:0;">
+                            <span class="cat-actions">
+                                <button class="mini-icon-btn" title="Yeniden adlandır" onclick="renameCategory('${escapeJs(cat)}', event)">✏️</button>
+                                ${canDelete ? `<button class="mini-icon-btn" title="Kategoriyi sil" onclick="removeCategory('${escapeJs(cat)}', event)">✕</button>` : ''}
+                            </span>
+                            <span class="badge">${catCounts[cat] || 0}</span>
+                        </span>
+                    </div>
+                `;
             }).join('');
+        }
+
+        function renderFeatureCheckboxes(containerId, selectedFeatures) {
+            const selectedSet = new Set((selectedFeatures || []).map(x => String(x).toLowerCase()));
+            const extraFeatures = (selectedFeatures || []).filter(
+                f => !STANDARD_FEATURES.some(sf => sf.toLowerCase() === String(f).toLowerCase())
+            );
+            const allList = [...STANDARD_FEATURES, ...extraFeatures];
+            const el = document.getElementById(containerId);
+            if (!el) return;
+            el.innerHTML = allList.map(feat => {
+                const checked = selectedSet.has(String(feat).toLowerCase()) ? 'checked' : '';
+                return `
+                    <label class="check-item">
+                        <input type="checkbox" class="feat-cb" value="${escapeHtml(feat)}" ${checked}>
+                        <span>${escapeHtml(feat)}</span>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        function readFeatureCheckboxes(containerId) {
+            const el = document.getElementById(containerId);
+            if (!el) return [];
+            return Array.from(el.querySelectorAll('.feat-cb:checked')).map(cb => cb.value);
+        }
+
+        function parseLanguagesText(text) {
+            const lines = String(text || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            const rows = [];
+            for (const line of lines) {
+                const parts = line.split('|').map(p => p.trim());
+                const lang = parts[0];
+                if (!lang) continue;
+                const toBool = (v) => /^(1|true|evet|yes|✓|✔|x)$/i.test(v || '');
+                const ui = parts.length > 1 ? toBool(parts[1]) : true;
+                const audio = parts.length > 2 ? toBool(parts[2]) : false;
+                const sub = parts.length > 3 ? toBool(parts[3]) : true;
+                rows.push({ language: lang, interface: ui, audio, subtitles: sub });
+            }
+            return rows;
+        }
+
+        function formatLanguagesText(langs) {
+            return (langs || []).map(l =>
+                `${l.language} | ${l.interface ? '1' : '0'} | ${l.audio ? '1' : '0'} | ${l.subtitles ? '1' : '0'}`
+            ).join('\n');
+        }
+
+        function parseDlcsText(text) {
+            const lines = String(text || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            return lines.map(line => {
+                const parts = line.split('|').map(p => p.trim());
+                return {
+                    name: parts[0] || 'DLC',
+                    url: parts[1] || ''
+                };
+            });
+        }
+
+        function formatDlcsText(dlcs) {
+            return (dlcs || []).map(d => d.url ? `${d.name} | ${d.url}` : d.name).join('\n');
+        }
+
+        function parseSteamLanguagesHtml(htmlStr) {
+            if (!htmlStr) return [];
+            const rows = [];
+            const rowRegex = /<tr[^>]*class=["'][^"']*game_language_options[^"']*["'][^>]*>([\s\S]*?)<\/tr>/gi;
+            let m;
+            while ((m = rowRegex.exec(htmlStr)) !== null) {
+                const tr = m[1];
+                const nameMatch = tr.match(/<td[^>]*class=["'][^"']*ellipsis[^"']*["'][^>]*>([\s\S]*?)<\/td>/i);
+                const langName = nameMatch ? nameMatch[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim() : '';
+                if (!langName) continue;
+                const cells = Array.from(tr.matchAll(/<td[^>]*class=["'][^"']*checkcol[^"']*["'][^>]*>([\s\S]*?)<\/td>/gi));
+                const hasCheck = (idx) => !!(cells[idx] && /✔|✓|check/i.test(cells[idx][1]));
+                rows.push({
+                    language: langName,
+                    interface: hasCheck(0),
+                    audio: hasCheck(1),
+                    subtitles: hasCheck(2)
+                });
+            }
+            return rows;
         }
 
         function openDatabase() {
@@ -834,6 +1115,33 @@
                         url: (m.mp4 && (m.mp4.max || m.mp4['480'])) || (m.webm && (m.webm.max || m.webm['480'])) || null
                     })).filter(m => m.url);
 
+                    // Özellikler ve kontrolcüler
+                    const features = [];
+                    for (const cat of (info.categories || [])) {
+                        if (cat && cat.description) features.push(cat.description);
+                    }
+                    if (info.controller_support) {
+                        features.push(info.controller_support === 'full' ? 'Tam Kontrolcü Desteği' : `Kontrolcü Desteği (${info.controller_support})`);
+                    }
+
+                    // Diller (Arayüz, Seslendirme, Altyazı)
+                    const languages = parseSteamLanguagesHtml(info.supported_language || '');
+
+                    // DLC listesi (ilk 15 DLC'nin adını çöz)
+                    const dlcIds = Array.isArray(info.dlc) ? info.dlc.slice(0, 15) : [];
+                    const dlcs = [];
+                    for (const dlcId of dlcIds) {
+                        const dlcUrl = `https://store.steampowered.com/api/appdetails?appids=${dlcId}&l=${lang}`;
+                        const dlcRes = await fetchViaProxy(dlcUrl);
+                        const dlcName = (dlcRes && dlcRes[dlcId] && dlcRes[dlcId].success && dlcRes[dlcId].data && dlcRes[dlcId].data.name)
+                            ? dlcRes[dlcId].data.name
+                            : `Steam DLC #${dlcId}`;
+                        dlcs.push({
+                            name: dlcName,
+                            url: `https://store.steampowered.com/app/${dlcId}/`
+                        });
+                    }
+
                     return {
                         appId: String(appId),
                         sourceType: 'Steam',
@@ -849,6 +1157,9 @@
                         header: info.header_image || headerImg,
                         screenshots,
                         movies,
+                        features,
+                        languages,
+                        dlcs,
                         storeUrl: `https://store.steampowered.com/app/${appId}/`
                     };
                 }
@@ -876,6 +1187,18 @@
                 ? (apiData.images.background.startsWith('http') ? apiData.images.background : 'https:' + apiData.images.background)
                 : (screenshots[0] || cover);
 
+            const languages = Object.entries(apiData.languages || {}).map(([code, label]) => ({
+                language: String(label || code),
+                interface: true,
+                audio: false,
+                subtitles: true
+            }));
+
+            const dlcs = (apiData.dlcs || []).map((d, idx) => ({
+                name: typeof d === 'string' ? d : (d.title || `GOG DLC #${idx + 1}`),
+                url: typeof d === 'string' ? '' : (d.url || '')
+            }));
+
             return {
                 appId: 'gog_' + (apiData.id || slug),
                 sourceType: 'GOG',
@@ -891,6 +1214,9 @@
                 header,
                 screenshots,
                 movies: [],
+                features: ['DRM-Free'],
+                languages,
+                dlcs,
                 storeUrl: rawUrl
             };
         }
@@ -914,6 +1240,9 @@
                 header: parsed.header || parsed.cover || '',
                 screenshots: parsed.screenshots || [],
                 movies: parsed.videos || [],
+                features: [],
+                languages: [],
+                dlcs: parsed.dlcs || [],
                 storeUrl: rawUrl
             };
         }
@@ -941,8 +1270,11 @@
             document.getElementById('manScreensFiles').value = '';
             document.getElementById('manDeveloper').value = '';
             document.getElementById('manGenres').value = '';
+            document.getElementById('manLanguagesText').value = 'Türkçe | 1 | 0 | 1\nİngilizce | 1 | 1 | 1';
+            document.getElementById('manDlcsText').value = '';
             document.getElementById('manDesc').value = '';
             document.getElementById('manNotes').value = '';
+            renderFeatureCheckboxes('manFeaturesGrid', []);
             document.getElementById('manualModalOverlay').classList.add('open');
         }
 
@@ -1001,6 +1333,9 @@
                             header: `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${steamId}/header.jpg`,
                             screenshots: [],
                             movies: [],
+                            features: [],
+                            languages: [],
+                            dlcs: [],
                             storeUrl: rawInput.startsWith('http') ? rawInput : `https://store.steampowered.com/app/${steamId}/`
                         };
                     }
@@ -1051,6 +1386,9 @@
             const screenFiles = Array.from(document.getElementById('manScreensFiles').files || []);
             const developer = document.getElementById('manDeveloper').value.trim() || 'Manuel';
             const genres = document.getElementById('manGenres').value.split(',').map(s => s.trim()).filter(Boolean);
+            const features = readFeatureCheckboxes('manFeaturesGrid');
+            const languages = parseLanguagesText(document.getElementById('manLanguagesText').value);
+            const dlcs = parseDlcsText(document.getElementById('manDlcsText').value);
             const desc = document.getElementById('manDesc').value.trim();
             const notes = document.getElementById('manNotes').value.trim();
 
@@ -1104,6 +1442,9 @@
                     screenshots: [],
                     screenshotBlobIds,
                     movies,
+                    features,
+                    languages,
+                    dlcs,
                     status,
                     category,
                     customNotes: notes,
@@ -1186,6 +1527,45 @@
                 ? `<div class="screenshots-grid">${resolvedScreens.map(s => `<img src="${escapeHtml(s)}" loading="lazy" decoding="async" onclick="openLightbox('${escapeJs(s)}')">`).join('')}</div>`
                 : '<p style="color:var(--text-muted)">Ekran görüntüsü bulunamadı.</p>';
 
+            const featuresHtml = (game.features && game.features.length > 0)
+                ? `<div class="feature-list">${game.features.map(f => `<div class="feature-row">✓ ${escapeHtml(f)}</div>`).join('')}</div>`
+                : '<p style="color:var(--text-muted)">Özellik / kontrolcü bilgisi eklenmemiş.</p>';
+
+            const langsHtml = (game.languages && game.languages.length > 0)
+                ? `<table class="lang-table">
+                    <thead>
+                        <tr>
+                            <th>Dil</th>
+                            <th class="center">Arayüz</th>
+                            <th class="center">Seslendirme</th>
+                            <th class="center">Altyazı</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${game.languages.map(l => `
+                            <tr>
+                                <td>${escapeHtml(l.language)}</td>
+                                <td class="center">${l.interface ? '<span class="check-mark">✓</span>' : '<span class="dash-mark">—</span>'}</td>
+                                <td class="center">${l.audio ? '<span class="check-mark">✓</span>' : '<span class="dash-mark">—</span>'}</td>
+                                <td class="center">${l.subtitles ? '<span class="check-mark">✓</span>' : '<span class="dash-mark">—</span>'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>`
+                : '<p style="color:var(--text-muted)">Dil desteği bilgisi eklenmemiş.</p>';
+
+            const dlcsHtml = (game.dlcs && game.dlcs.length > 0)
+                ? `<div class="dlc-list">${game.dlcs.map((d, i) => `
+                    <div class="dlc-item">
+                        <div>
+                            <div style="font-weight:600;">${escapeHtml(d.name)}</div>
+                            ${d.url ? `<a href="${escapeHtml(d.url)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent); font-size:0.78rem;">Bağlantı ↗</a>` : ''}
+                        </div>
+                        <button class="dlc-add-btn" onclick="promoteDlcToLibrary('${escapeJs(game.appId)}', ${i})">+ Arşive Ekle</button>
+                    </div>
+                `).join('')}</div>`
+                : '<p style="color:var(--text-muted)">Bu oyun için DLC kaydı bulunmuyor.</p>';
+
             const catOptions = categories.map(c =>
                 `<option value="${escapeHtml(c)}" ${(game.category || 'Genel') === c ? 'selected' : ''}>${escapeHtml(c)}</option>`
             ).join('');
@@ -1199,18 +1579,17 @@
                         <div class="detail-title-area">
                             <h1>
                                 <span>${escapeHtml(game.name)}</span>
-                                <button class="edit-pen" title="Adı düzenle" onclick="editFieldPrompt('${game.appId}', 'name', 'Oyun Adı')">✏️</button>
+                                <button class="edit-pen" title="Düzenleme penceresini aç" onclick="openEditModal('${escapeJs(game.appId)}')">✏️</button>
                             </h1>
                             <div style="color: var(--text-muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                                 <span>${escapeHtml((game.developers || []).join(', '))}</span>
-                                <button class="edit-pen" title="Geliştiriciyi düzenle" onclick="editDevelopersPrompt('${game.appId}')">✏️</button>
                                 <span>•</span>
                                 <span>${escapeHtml(game.releaseDate || '')}</span>
-                                <button class="edit-pen" title="Çıkış tarihini düzenle" onclick="editFieldPrompt('${game.appId}', 'releaseDate', 'Çıkış Tarihi')">✏️</button>
+                                <button class="edit-pen" title="Detayları düzenle" onclick="openEditModal('${escapeJs(game.appId)}')">✏️</button>
                             </div>
                             <div class="tags">
                                 ${(game.genres || []).map(g => `<span class="tag">${escapeHtml(g)}</span>`).join('')}
-                                <button class="edit-pen" title="Türleri düzenle" onclick="editGenresPrompt('${game.appId}')">✏️ Türler</button>
+                                <button class="edit-pen" title="Türleri ve detayları düzenle" onclick="openEditModal('${escapeJs(game.appId)}')">✏️ Düzenle</button>
                             </div>
                         </div>
                     </div>
@@ -1224,8 +1603,20 @@
                             ${screensHtml}
 
                             <div class="section-title">
+                                <span>DLC'ler (İndirilebilir İçerik)</span>
+                                <button class="edit-pen" title="DLC listesini düzenle" onclick="openEditModal('${escapeJs(game.appId)}')">✏️</button>
+                            </div>
+                            ${dlcsHtml}
+
+                            <div class="section-title">
+                                <span>Diller (Arayüz / Seslendirme / Altyazı)</span>
+                                <button class="edit-pen" title="Dilleri düzenle" onclick="openEditModal('${escapeJs(game.appId)}')">✏️</button>
+                            </div>
+                            ${langsHtml}
+
+                            <div class="section-title">
                                 <span>Oyun Hakkında</span>
-                                <button class="edit-pen" title="Açıklamayı düzenle" onclick="editDescriptionPrompt('${game.appId}')">✏️ Düzenle</button>
+                                <button class="edit-pen" title="Açıklamayı düzenle" onclick="openEditModal('${escapeJs(game.appId)}')">✏️</button>
                             </div>
                             <div class="description-box">${game.detailedDescription || escapeHtml(game.shortDescription) || '<span style="color:var(--text-muted)">Açıklama yok.</span>'}</div>
                         </div>
@@ -1246,31 +1637,20 @@
                             <div class="info-row">
                                 <strong>
                                     <span>Kişisel Notlarım</span>
-                                    <button class="edit-pen" title="Notu düzenle" onclick="editFieldPrompt('${game.appId}', 'customNotes', 'Kişisel Notlar')">✏️</button>
+                                    <button class="edit-pen" title="Notları düzenle" onclick="openEditModal('${escapeJs(game.appId)}')">✏️</button>
                                 </strong>
                                 <textarea class="form-control" rows="4" onblur="updateGameField('${game.appId}', { customNotes: this.value })">${escapeHtml(game.customNotes || '')}</textarea>
                             </div>
                             <div class="info-row">
                                 <strong>
-                                    <span>Geliştirici</span>
-                                    <button class="edit-pen" onclick="editDevelopersPrompt('${game.appId}')">✏️</button>
+                                    <span>Özellikler & Kontrolcüler</span>
+                                    <button class="edit-pen" title="Özellikleri düzenle" onclick="openEditModal('${escapeJs(game.appId)}')">✏️</button>
                                 </strong>
-                                ${escapeHtml((game.developers || []).join(', '))}
+                                ${featuresHtml}
                             </div>
-                            <div class="info-row">
-                                <strong>
-                                    <span>Yayıncı</span>
-                                    <button class="edit-pen" onclick="editPublishersPrompt('${game.appId}')">✏️</button>
-                                </strong>
-                                ${escapeHtml((game.publishers || []).join(', '))}
-                            </div>
-                            <div class="info-row">
-                                <strong>
-                                    <span>Metacritic Puanı</span>
-                                    <button class="edit-pen" onclick="editMetacriticPrompt('${game.appId}')">✏️</button>
-                                </strong>
-                                ${game.metacritic ? `<span style="color:var(--success); font-weight:bold;">${escapeHtml(game.metacritic)} / 100</span>` : '<span style="color:var(--text-muted)">Belirtilmemiş</span>'}
-                            </div>
+                            <div class="info-row"><strong>Geliştirici</strong>${escapeHtml((game.developers || []).join(', '))}</div>
+                            <div class="info-row"><strong>Yayıncı</strong>${escapeHtml((game.publishers || []).join(', '))}</div>
+                            <div class="info-row"><strong>Metacritic Puanı</strong>${game.metacritic ? `<span style="color:var(--success); font-weight:bold;">${escapeHtml(game.metacritic)} / 100</span>` : '<span style="color:var(--text-muted)">Belirtilmemiş</span>'}</div>
                             <div class="info-row"><strong>Kaynak / ID</strong>${escapeHtml(game.sourceType || 'Steam')} • ${escapeHtml(game.appId)}</div>
                             ${game.storeUrl ? `<div class="info-row"><a href="${escapeHtml(game.storeUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent); font-size:0.84rem;">Kaynak Sayfasını Aç ↗</a></div>` : ''}
                             <button class="btn-danger" onclick="deleteGame('${game.appId}')">Oyunu Arşivden Sil</button>
@@ -1281,68 +1661,115 @@
             document.getElementById('detailModalOverlay').classList.add('open');
         }
 
-        async function editFieldPrompt(appId, field, label) {
+        async function openEditModal(appId) {
             const game = await getGameByIdFromDb(appId);
             if (!game) return;
-            const nextVal = prompt(`${label} değerini gir:`, game[field] || '');
-            if (nextVal === null) return;
-            await updateGameField(appId, { [field]: nextVal.trim() });
-            if (activeDetailAppId === String(appId)) await openDetail(appId);
+            editingAppId = String(appId);
+            syncCategorySelects();
+
+            document.getElementById('editNameInput').value = game.name || '';
+            document.getElementById('editCategoryInput').value = game.category || 'Genel';
+            document.getElementById('editStatusInput').value = game.status || 'Oynanacak';
+            document.getElementById('editDevelopersInput').value = (game.developers || []).join(', ');
+            document.getElementById('editPublishersInput').value = (game.publishers || []).join(', ');
+            document.getElementById('editReleaseInput').value = game.releaseDate || '';
+            document.getElementById('editMetacriticInput').value = game.metacritic ?? '';
+            document.getElementById('editGenresInput').value = (game.genres || []).join(', ');
+            renderFeatureCheckboxes('editFeaturesGrid', game.features || []);
+            document.getElementById('editLanguagesInput').value = formatLanguagesText(game.languages || []);
+            document.getElementById('editDlcsInput').value = formatDlcsText(game.dlcs || []);
+            const plainDesc = (game.detailedDescription || game.shortDescription || '').replace(/<[^>]+>/g, ' ').trim();
+            document.getElementById('editDescInput').value = plainDesc;
+            document.getElementById('editNotesInput').value = game.customNotes || '';
+
+            document.getElementById('editModalOverlay').classList.add('open');
         }
 
-        async function editDevelopersPrompt(appId) {
-            const game = await getGameByIdFromDb(appId);
-            if (!game) return;
-            const nextVal = prompt('Geliştirici(ler) (virgülle ayır):', (game.developers || []).join(', '));
-            if (nextVal === null) return;
-            const arr = nextVal.split(',').map(s => s.trim()).filter(Boolean);
-            await updateGameField(appId, { developers: arr.length ? arr : ['Bilinmiyor'] });
-            if (activeDetailAppId === String(appId)) await openDetail(appId);
+        function closeEditModal() {
+            editingAppId = null;
+            document.getElementById('editModalOverlay').classList.remove('open');
         }
 
-        async function editPublishersPrompt(appId) {
-            const game = await getGameByIdFromDb(appId);
+        async function saveEditedGame() {
+            if (!editingAppId) return;
+            const game = await getGameByIdFromDb(editingAppId);
             if (!game) return;
-            const nextVal = prompt('Yayıncı(lar) (virgülle ayır):', (game.publishers || []).join(', '));
-            if (nextVal === null) return;
-            const arr = nextVal.split(',').map(s => s.trim()).filter(Boolean);
-            await updateGameField(appId, { publishers: arr.length ? arr : ['Bilinmiyor'] });
-            if (activeDetailAppId === String(appId)) await openDetail(appId);
-        }
 
-        async function editGenresPrompt(appId) {
-            const game = await getGameByIdFromDb(appId);
-            if (!game) return;
-            const nextVal = prompt('Tür etiketleri (virgülle ayır):', (game.genres || []).join(', '));
-            if (nextVal === null) return;
-            const arr = nextVal.split(',').map(s => s.trim()).filter(Boolean);
-            await updateGameField(appId, { genres: arr });
-            if (activeDetailAppId === String(appId)) await openDetail(appId);
-        }
+            const name = document.getElementById('editNameInput').value.trim() || game.name;
+            const category = document.getElementById('editCategoryInput').value || 'Genel';
+            const status = document.getElementById('editStatusInput').value;
+            const devs = document.getElementById('editDevelopersInput').value.split(',').map(s => s.trim()).filter(Boolean);
+            const pubs = document.getElementById('editPublishersInput').value.split(',').map(s => s.trim()).filter(Boolean);
+            const releaseDate = document.getElementById('editReleaseInput').value.trim();
+            const metaRaw = document.getElementById('editMetacriticInput').value.trim();
+            const metacritic = metaRaw === '' ? null : Number(metaRaw);
+            const genres = document.getElementById('editGenresInput').value.split(',').map(s => s.trim()).filter(Boolean);
+            const features = readFeatureCheckboxes('editFeaturesGrid');
+            const languages = parseLanguagesText(document.getElementById('editLanguagesInput').value);
+            const dlcs = parseDlcsText(document.getElementById('editDlcsInput').value);
+            const descText = document.getElementById('editDescInput').value.trim();
+            const customNotes = document.getElementById('editNotesInput').value;
 
-        async function editMetacriticPrompt(appId) {
-            const game = await getGameByIdFromDb(appId);
-            if (!game) return;
-            const nextVal = prompt('Metacritic puanı (0-100 veya boş):', game.metacritic ?? '');
-            if (nextVal === null) return;
-            const trimmed = nextVal.trim();
-            const num = trimmed === '' ? null : Number(trimmed);
-            await updateGameField(appId, { metacritic: Number.isFinite(num) ? num : null });
-            if (activeDetailAppId === String(appId)) await openDetail(appId);
-        }
-
-        async function editDescriptionPrompt(appId) {
-            const game = await getGameByIdFromDb(appId);
-            if (!game) return;
-            const currentPlain = (game.detailedDescription || game.shortDescription || '').replace(/<[^>]+>/g, ' ').trim();
-            const nextVal = prompt('Oyun açıklaması:', currentPlain);
-            if (nextVal === null) return;
-            const trimmed = nextVal.trim();
-            await updateGameField(appId, {
-                shortDescription: trimmed,
-                detailedDescription: trimmed ? `<p>${escapeHtml(trimmed).replace(/\n/g, '<br>')}</p>` : ''
+            await putGameToDb({
+                ...game,
+                name,
+                category,
+                status,
+                developers: devs.length ? devs : ['Bilinmiyor'],
+                publishers: pubs.length ? pubs : ['Bilinmiyor'],
+                releaseDate,
+                metacritic: Number.isFinite(metacritic) ? metacritic : null,
+                genres,
+                features,
+                languages,
+                dlcs,
+                shortDescription: descText,
+                detailedDescription: descText ? `<p>${escapeHtml(descText).replace(/\n/g, '<br>')}</p>` : '',
+                customNotes
             });
-            if (activeDetailAppId === String(appId)) await openDetail(appId);
+
+            const targetId = editingAppId;
+            closeEditModal();
+            await reloadLibrary(false);
+            if (activeDetailAppId === targetId) {
+                await openDetail(targetId);
+            }
+        }
+
+        async function promoteDlcToLibrary(parentAppId, dlcIndex) {
+            const parent = await getGameByIdFromDb(parentAppId);
+            if (!parent || !Array.isArray(parent.dlcs) || !parent.dlcs[dlcIndex]) return;
+            const dlc = parent.dlcs[dlcIndex];
+            const dlcAppId = 'dlc_' + parent.appId + '_' + dlcIndex + '_' + Date.now().toString(36);
+            await putGameToDb({
+                appId: dlcAppId,
+                sourceType: `DLC (${parent.name})`,
+                name: dlc.name,
+                shortDescription: `${parent.name} için DLC`,
+                detailedDescription: `<p>${escapeHtml(parent.name)} için ek içerik (DLC).</p>`,
+                developers: parent.developers || ['Bilinmiyor'],
+                publishers: parent.publishers || ['Bilinmiyor'],
+                releaseDate: parent.releaseDate || '',
+                genres: ['DLC', ...(parent.genres || [])],
+                metacritic: null,
+                cover: parent.cover || '',
+                coverBlobId: parent.coverBlobId || '',
+                header: parent.header || '',
+                headerBlobId: parent.headerBlobId || '',
+                screenshots: [],
+                screenshotBlobIds: [],
+                movies: [],
+                features: parent.features || [],
+                languages: parent.languages || [],
+                dlcs: [],
+                status: parent.status || 'Oynanacak',
+                category: parent.category || 'Genel',
+                customNotes: dlc.url ? `DLC Linki: ${dlc.url}` : '',
+                storeUrl: dlc.url || '',
+                addedAt: new Date().toISOString()
+            });
+            await reloadLibrary(false);
+            alert(`"${dlc.name}" ayrı bir arşiv kaydı olarak eklendi.`);
         }
 
         function closeDetail() {
